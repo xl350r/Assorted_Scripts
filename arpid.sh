@@ -5,7 +5,7 @@
 ##
 $nmap_prefixes_file =' location of nmap-mac-prefixes'
 
-arptable() { arp -a $@ | cut -d " " -f2,4 | tr -d ")(" | tr " " "\t" | egrep -v "^224|^255|255\t"; }
+arptable() { arp -a $@ | cut -d " " -f2,4 | tr -d ")(" | tr " " "\t" | egrep -v "^22[4-9]|^2[3-9][-9]|255\t"; }
 
 arpid() {
 MACS=$(arptable | awk -F "\t" '{print $2}' | egrep -v "incomplete" | awk -F ":" '{if (length($1) == 
