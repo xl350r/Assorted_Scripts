@@ -3,7 +3,7 @@
     [parameter(Position=0, mandatory=$True, helpmessage="Drive to check amount of free space")]
     [ValidateNotNullorEmpty()]
     [string] $drive, 
-    [parameter(Position=1, mandatory=$False, helpmessage="List of computers to Check")]
+    [parameter(Position=1, mandatory=$False, helpmessage="List of computers to Check, must be comma seperated")]
     [ValidateNotNullorEmpty()]
     [array] $computer
     )
@@ -19,9 +19,7 @@
             Get-WmiObject -Class Win32_LogicalDisk -filter $drive | ft SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto
         }
         else { 
-            foreach ($i in $computer) {
-                Get-WmiObject -Class Win32_LogicalDisk -ComputerName $i -filter $drive | ft SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto   
-            }
+            Get-WmiObject -Class Win32_LogicalDisk -ComputerName $computer -filter $drive | ft SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto   
         }
     }
     Catch {
