@@ -1,7 +1,7 @@
 ﻿function get-free() { 
     Param(
     [parameter(Position=0, mandatory=$True, helpmessage="Drive to check amount of free space")]
-    [ValidateNotNullorEmpty()]
+    #[ValidateNotNullorEmpty()]
     [string] $drive, 
     [parameter(Position=1, mandatory=$False, helpmessage="List of computers to Check, must be comma seperated")]
     [ValidateNotNullorEmpty()]
@@ -10,16 +10,20 @@
     if ($drive.Length -eq 1) {
         $drive = "DeviceId='$($drive):'"
     }
+    elseif ($drive -eq "all") {
+        $drive=''
+    }
     else {
-        write-host "Please only use a single drive letter."
+        write-warning "Please only use a single drive letter, or indicate 'all'"
+        break
     }
 
     try {
         if($computer.Length -eq 0) {
-            Get-WmiObject -Class Win32_LogicalDisk -filter $drive | ft SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto
+            Get-WmiObject -Class Win32_LogicalDisk -filter $drive | ft DeviceID, SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto
         }
         else { 
-            Get-WmiObject -Class Win32_LogicalDisk -ComputerName $computer -filter $drive | ft SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto   
+            Get-WmiObject -Class Win32_LogicalDisk -ComputerName $computer -filter $drive | ft DeviceID, SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto   
         }
     }
     Catch {
