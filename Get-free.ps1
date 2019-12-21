@@ -1,4 +1,4 @@
-﻿function get-free() { 
+function get-free() { 
     Param(
     [parameter(Position=0, mandatory=$True, helpmessage="Drive to check amount of free space")]
     #[ValidateNotNullorEmpty()]
@@ -20,10 +20,10 @@
 
     try {
         if($computer.Length -eq 0) {
-            Get-WmiObject -Class Win32_LogicalDisk -filter $drive | ft DeviceID, SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto
+            Get-WmiObject -Class Win32_LogicalDisk -filter $drive | ft DeviceID, SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}}, @{name="Capacity"; Expression={[math]::round($($_.Size/1Gb),2)}} -auto
         }
         else { 
-            Get-WmiObject -Class Win32_LogicalDisk -ComputerName $computer -filter $drive | ft DeviceID, SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}} -auto   
+            Get-WmiObject -Class Win32_LogicalDisk -ComputerName $computer -filter $drive | ft DeviceID, SystemName, @{name="Free"; Expression={[math]::round($($_.FreeSpace/1GB),2)}}, @{name="Capacity"; Expression={[math]::round($($_.Size/1Gb),2)}} -auto
         }
     }
     Catch {
